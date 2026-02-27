@@ -1,0 +1,211 @@
+{
+  "name": "Main AI AGENT",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -160
+      ],
+      "id": "27049144-b9c5-4266-8c31-56625991406c",
+      "name": "Telegram Trigger",
+      "webhookId": "a26502f0-04af-4531-9647-903ad67ce5ad",
+      "credentials": {
+        "telegramApi": {
+          "id": "8TWM9UD8ewZ49Nlt",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant user to automate his YouTube pre-production process \n\nalways start by calling the research Agent Tool and then give the user a clear, lower caps response "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -144,
+        -160
+      ],
+      "id": "e775e859-015c-4f23-be61-476424834c77",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        -160
+      ],
+      "id": "e4f23064-6555-4ebb-8ee0-7809322b3913",
+      "name": "Send a text message",
+      "webhookId": "49ef7f7d-af29-4221-8143-51e8cfef88c2",
+      "credentials": {
+        "telegramApi": {
+          "id": "8TWM9UD8ewZ49Nlt",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        144
+      ],
+      "id": "c658fe07-9e6c-4777-91fc-1023768a41ba",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "s8tyk82YJp0dDkhr",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "This tool calls an AI Agent that performs a detailed and thorough web search for our video idea",
+        "workflowId": {
+          "__rl": true,
+          "value": "gB6JfxqeKYnaaTk-0rSxA",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        144
+      ],
+      "id": "6a210b18-538a-4d12-af80-5953854bbb9a",
+      "name": "RESEARCH AGENT"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "h39-sW00_YOzg7tinPHbV",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/h39-sW00_YOzg7tinPHbV",
+          "cachedResultName": "THUMBNAIL AGENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        144
+      ],
+      "id": "4ce084e9-dfce-42eb-a9dd-51afa1ed3fe5",
+      "name": "Call 'THUMBNAIL AGENT'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RESEARCH AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'THUMBNAIL AGENT'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5e2e5262-3cba-4d91-9704-fee27fcf9808",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c04f3ac73c1040a48e6b2de625aef0a8e660976c9da23a6d03d0c8a7b489447b"
+  },
+  "id": "W-sLTAo-MUj1Mc0ySh4hU",
+  "tags": []
+}
