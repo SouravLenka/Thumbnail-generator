@@ -1,0 +1,129 @@
+{
+  "name": "RESEARCH AGENT",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "search_query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        -80
+      ],
+      "id": "18dd07ba-395e-4a2f-95a1-2bb52ec1dd5e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.search_query }}",
+        "options": {
+          "systemMessage": "You are a web search expert. Whatever search query you receive, perform a detailed web search on that.\n\nThe goal is to gather as much relevant information as possible, to make it easy for the user to make a Youtube video about the given topic.\n\nFormat the answer as 4 detailed paragraphs."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -176,
+        -80
+      ],
+      "id": "1d24891e-09f4-4a44-bc9e-6481e938387e",
+      "name": "RESEARCH AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        208
+      ],
+      "id": "05b69012-41fc-453f-90f4-2a3d9ab14008",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "s8tyk82YJp0dDkhr",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        32,
+        160
+      ],
+      "id": "d1eb7b03-4626-479a-a076-b2b8b0f5916b",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "mLP7wvR48Pv67U9X",
+          "name": "SerpApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "RESEARCH AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RESEARCH AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "RESEARCH AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bb294bcf-a9b9-4492-b3ee-8825123c0413",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c04f3ac73c1040a48e6b2de625aef0a8e660976c9da23a6d03d0c8a7b489447b"
+  },
+  "id": "gB6JfxqeKYnaaTk-0rSxA",
+  "tags": []
+}

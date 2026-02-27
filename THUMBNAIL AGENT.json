@@ -1,0 +1,151 @@
+{
+  "name": "THUMBNAIL AGENT",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "idea"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        -192
+      ],
+      "id": "67f3a81f-0066-4a3b-be8e-c7cc63c42c41",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.idea }}",
+        "options": {
+          "systemMessage": "=You are **Thumbnail Agent**, a focused assistant that transforms a video idea into a precise image-generation prompt for creating a YouTube thumbnail.\n\n**When invoked, follow these rules exactly:**\n\n1. **Input**\n\nA short video idea or topic description (plus any angle or target keywords).\n\n2. **Output**\n\nA single, detailed prompt optimized for a text-to-image generator.\n\nReturn **only** the prompt-no explanations or extra text.\n\n3. **Prompt Requirements**\n\n- **Subject & Focus:** Clearly name the main visual element (e.g., person, object, scene).\n\n**Action & Emotion:** Specify what's happening and the desired mood or energy.\n\n**Composition & Layout:** Mention framing (close-up, mid-shot), perspective (overhead, eye-level), and placement of key elements.\n\n**Text Overlay:** Include any headline or call-to-action text to appear on the thumbnail, with approximate placement (top/bottom/center).\n\n- **Style & Aesthetic:** Define art style\n\n(realistic, cartoon, 3D render), color palette (bold contrasts, bright saturations), and lighting (high-contrast, soft glow).\n\n**Readability & Impact:** Ensure the subject and text will stand out at small sizes.\n\n4. **Formatting & Tone**\n\nWrite in clear, descriptive English as a single paragraph.\n\nUse imperative, vivid language (\"Show,\" \"Feature,\" \"Highlight\").\n\nAvoid technical jargon-focus on visual details.\n\n*Example*\nShow a dynamic, close-up view of a humanoid robot holding a glowing brain-shaped circuit, set against a dark, futuristic cityscape. Place bold, uppercase text \"BUILD AI AGENTS\" at the top in neon blue with a subtle drop shadow, and smaller \"Step-by-Step Guide\" at the bottom. Use a high-contrast, cyberpunk color palette with glowing highlights and dramatic rim lighting to make the robot and text pop on small screens.\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        -192
+      ],
+      "id": "7d13b8a9-ae48-4e77-aebb-77ca7e63a1cc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "=meta-llama/llama-4-maverick-17b-128e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        32
+      ],
+      "id": "a2e17f46-4ee6-4d8c-86aa-6ddf39a1ed13",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "s8tyk82YJp0dDkhr",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://.groq.com",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "bearer __n8n_BLANK_VALUE_e5362baf-c777-4d57-a609-6eaf1f9e87f6"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model ",
+              "value": "meta-llama/llama-4-maverick-17b-128e-instruct"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "size",
+              "value": "1536x1024"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        288,
+        -192
+      ],
+      "id": "4cf5842c-591f-4a19-94db-1d68d2db8b5d",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1f2c960c-2db0-4aa3-8f87-b6cd02f2655a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c04f3ac73c1040a48e6b2de625aef0a8e660976c9da23a6d03d0c8a7b489447b"
+  },
+  "id": "h39-sW00_YOzg7tinPHbV",
+  "tags": []
+}
